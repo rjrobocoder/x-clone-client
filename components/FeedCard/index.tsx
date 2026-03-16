@@ -42,7 +42,7 @@ const FeedCard: React.FC = () => {
             </p>
           </div>
 
-          <div className="mt-3 overflow-hidden rounded-2xl border border-border bg-muted/20 aspect-[16/9]" />
+          <div className="mt-3 overflow-hidden rounded-2xl border border-border bg-muted/20 aspect-video" />
 
           <div className="mt-2 grid grid-cols-5">
             <div className="flex items-center gap-1 text-muted-foreground hover:text-sky-500">
