@@ -1,6 +1,13 @@
+"use client";
+
+import { graphqlClient } from "@/clients/api";
 import FeedCard from "@/components/FeedCard";
 import { Button } from "@/components/ui/button";
+import { verifyUserGoogleTokenQuery } from "@/graphql/query/user";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { Bell, Bookmark, HashIcon, HomeIcon, MoreHorizontal, User } from "lucide-react";
+import { useCallback } from "react";
+import toast from "react-hot-toast";
 import { BiEnvelope, BiMoney } from "react-icons/bi";
 import { BsTwitterX } from "react-icons/bs";
 
@@ -45,6 +52,20 @@ const xSidebarItems: XSidebarItemProps[] = [
 ];
 
 export default function Home() {
+  const handleLoginWithGoogle = useCallback(async (cred: CredentialResponse) => {
+    const googleToken = cred.credential;
+    if (!googleToken) return toast.error("Google token not found");
+    
+    const { verifyGoogleToken } = await graphqlClient.request(verifyUserGoogleTokenQuery, { token: googleToken });
+    if (!verifyGoogleToken) return toast.error("Google token verification failed");
+    toast.success("Google token verification successful");
+    console.log(verifyGoogleToken);
+
+    if (verifyGoogleToken) {
+      window.localStorage.setItem("__x_token__", verifyGoogleToken);
+    }
+  }, [])
+  
   return (
     <div className="bg-background">
       <div className="grid grid-cols-12 h-screen w-screen px-56">
@@ -76,7 +97,38 @@ export default function Home() {
           <FeedCard />
           <FeedCard />
         </div>
-        <div className="col-span-3"></div>
+        <div className="col-span-3">
+          <div className="p-4">
+            <div className="bg-background border border-border rounded-2xl p-6">
+              <h2 className="text-foreground text-2xl font-extrabold mb-2">New to X?</h2>
+              <p className="text-muted-foreground text-sm mb-4">Sign up now to get your own personalized timeline!</p>
+              <div className="space-y-3">
+                <GoogleLogin onSuccess={handleLoginWithGoogle} />
+                {/* <Button className="w-full bg-white hover:bg-gray-100 text-black border border-gray-300 rounded-full font-semibold">
+                </Button> */}
+                {/* <Button className="w-full bg-white hover:bg-gray-100 text-black border border-gray-300 rounded-full font-semibold">
+                  Sign up with Apple
+                </Button> */}
+                <div className="flex items-center gap-2 my-2">
+                  <div className="flex-1 h-px bg-border" />
+                  <span className="text-xs text-muted-foreground">or</span>
+                  <div className="flex-1 h-px bg-border" />
+                </div>
+                <Button className="w-full bg-[#1d9bf0] hover:bg-[#1a8cd8] text-white rounded-full font-semibold">
+                  Create account
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-4">
+                By signing up, you agree to the <a href="#" className="text-[#1d9bf0] hover:underline">Terms of Service</a> and <a href="#" className="text-[#1d9bf0] hover:underline">Privacy Policy</a>, including <a href="#" className="text-[#1d9bf0] hover:underline">Cookie Use</a>.
+              </p>
+              <div className="mt-6">
+                <p className="text-muted-foreground text-sm">
+                  Have an account already? <a href="#" className="text-[#1d9bf0] hover:underline font-semibold">Sign in</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
