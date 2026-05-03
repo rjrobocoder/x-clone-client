@@ -2,6 +2,7 @@
 
 import { graphqlClient } from "@/clients/api";
 import FeedCard from "@/components/FeedCard";
+import TweetComposer from "@/components/TweetComposer";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { verifyUserGoogleTokenQuery } from "@/graphql/query/user";
@@ -126,6 +127,7 @@ export default function Home() {
           </div>
         </div>
         <div className="col-span-6 border-r border-l border-border overflow-y-auto no-scrollbar">
+          <TweetComposer />
           <FeedCard />
           <FeedCard />
           <FeedCard />
